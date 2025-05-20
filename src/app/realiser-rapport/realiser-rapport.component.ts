@@ -111,7 +111,7 @@ export class RealiserRapportComponent implements OnInit {
     this.http.get<Sx[]>(`https://localhost:7299/api/Auditor/C-by-factory?factoryId=${this.factoryId}`, { headers })
       .subscribe({
         next: (sxList) => {
-          console.log('SxList received:', sxList); // Debug log
+          console.log('SxList received:', sxList); 
           if (!sxList || sxList.length === 0) {
             this.errorMessage = 'Aucun critère trouvé.';
             return;
@@ -127,10 +127,10 @@ export class RealiserRapportComponent implements OnInit {
               sNameJaponaise: sx.nameJaponaise
             }))
           );
-          console.log('Report scores initialized:', this.report.scores); // Debug log
+          console.log('Report scores initialized:', this.report.scores); 
         },
         error: (err) => {
-          console.error('Error fetching criteria:', err); // Debug log
+          console.error('Error fetching criteria:', err); 
           this.errorMessage = 'Erreur lors de la récupération des critères. Détails: ' + 
             (err.error?.message || err.message || 'Erreur inconnue');
         }
