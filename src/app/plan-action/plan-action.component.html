@@ -1,0 +1,294 @@
+<div class="p-6 max-w-6xl mx-auto">
+  <h2 class="text-2xl font-bold text-[#352961] mb-2">Plans d'Action</h2>
+  <p class="text-gray-600 mt-2 text-sm">Gérez les plans d'action associés aux principes S et suivez leur progression.</p>
+
+  <!-- Error and Success Messages -->
+  <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+    {{ successMessage }}
+  </div>
+
+  <div class="flex justify-end">
+  <!-- Create Plan Action Button -->
+  <button 
+    [class]="showCreateForm ? 
+      'mb-4 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center gap-2 shadow-sm cursor-pointer' : 
+      'mb-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2 shadow-sm cursor-pointer'"
+    (click)="toggleCreateForm()">
+    <i *ngIf="!showCreateForm" class="fa-solid fa-plus"></i>
+    <i *ngIf="showCreateForm" class="fa-solid fa-xmark"></i>
+    {{ showCreateForm ? 'Fermer' : 'Créer un Plan d\'Action' }}
+  </button>
+</div>
+
+  <!-- Create Plan Action Form -->
+  <div *ngIf="showCreateForm" class="mb-6 bg-white rounded-lg shadow-md p-6">
+    <h4 class="text-xl font-semibold text-[#352961] mb-4">Nouveau Plan d'Action</h4>
+    <form (ngSubmit)="createPlanAction()" class="space-y-4">
+      <div>
+        <label for="planName" class="block text-sm font-medium text-gray-700 mb-1">Nom du Plan</label>
+        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+               id="planName" [(ngModel)]="planName" name="planName" required>
+      </div>
+
+      <div>
+        <label for="factory" class="block text-sm font-medium text-gray-700 mb-1">Usine</label>
+        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                id="factory" [(ngModel)]="selectedFactoryId" name="factory" (change)="onFactoryChange()" required>
+          <option value="">Sélectionner une usine</option>
+          <option *ngFor="let factory of factories" [value]="factory.id">
+            {{ factory.name }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label for="report" class="block text-sm font-medium text-gray-700 mb-1">Rapport</label>
+        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                id="report" [(ngModel)]="selectedReportId" name="report" required>
+          <option value="">Sélectionner un rapport</option>
+          <option *ngFor="let report of reports" [value]="report.id">
+            {{ report.name }} ({{ report.createdDate | date:'dd/MM/yyyy' }})
+          </option>
+        </select>
+      </div>
+
+    
+
+      <div>
+        <label for="taskName" class="block text-sm font-medium text-gray-700 mb-1">Nouvelle Tâche</label>
+        <div class="flex gap-2">
+          <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                 id="taskName" [(ngModel)]="newTaskName" name="taskName" placeholder="Nom de la tâche">
+          <select class="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  [(ngModel)]="selectedSId" name="selectedSId">
+            <option value="">Sélectionner S</option>
+            <option *ngFor="let s of sDefinitions" [value]="s.id">
+              {{ s.nameEnglish }} ({{ s.nameJaponaise }})
+            </option>
+          </select>
+          <button type="button" 
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 cursor-pointer"
+                  (click)="addTask()">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="tasks.length > 0" class="mt-4">
+        <h6 class="text-sm font-medium text-gray-700 mb-2">Tâches ajoutées:</h6>
+        <ul class="space-y-2">
+          <li *ngFor="let task of tasks; let i = index" class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+            <div>
+              <span class="font-medium">{{ task.name }}</span>
+              <span class="text-sm text-gray-500 ml-2">({{ task.nameS }})</span>
+            </div>
+            <button type="button" 
+                    class="text-red-600 hover:text-red-800 transition-colors duration-200"
+                    (click)="removeTask(i)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="flex justify-center mt-2">
+      <button type="submit" 
+              class="  w-60 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+        <i class="fa-solid fa-check"></i>
+        Créer le Plan d'Action
+      </button>
+    </div>
+    </form>
+  </div>
+
+  <!-- Plans d'Action List -->
+  <div *ngIf="!loading; else loadingSpinner" class="grid gap-6">
+    <div *ngFor="let plan of planActions" class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <div class="flex-1">
+            <div *ngIf="editingPlanId !== plan.id" class="flex items-center gap-2">
+              <h3 class="text-lg font-semibold text-gray-800 ">{{ plan.name }}</h3>
+              <div class="mt-[1px]">
+              <span *ngIf="plan.isDone" class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full flex items-center gap-1">
+                <i class="fas fa-check-circle"></i>
+                Terminé
+              </span>
+              <span *ngIf="!plan.isDone" class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full flex items-center gap-1">
+                <i class="fas fa-clock"></i>
+                En cours
+              </span>
+
+            </div>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Usine : {{ plan.factory }}</p>
+            <div *ngIf="editingPlanId === plan.id "  class="flex gap-2 items-center">
+              <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                     [(ngModel)]="plan.name">
+              <div  class="flex items-center gap-1">
+                <button 
+                  (click)="updatePlanName(plan, plan.name)"
+                  class="text-blue-600 hover:text-blue-700 cursor-pointer"
+                  title="Sauvegarder">
+                  <i class="fas fa-check text-base"></i>
+                </button>
+                <button 
+                  (click)="editingPlanId = null"
+                  class="text-gray-400 hover:text-gray-500 cursor-pointer"
+                  title="Annuler">
+                  <i class="fas fa-times text-base"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <div *ngIf="editingPlanId !== plan.id ">
+              <button class="text-blue-600 hover:text-blue-800 transition-colors duration-200 mr-2 cursor-pointer"
+                      (click)="startEditPlan(plan)">
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button class="text-red-600 hover:text-red-800 transition-colors duration-200 cursor-pointer"
+                      (click)="deletePlanAction(plan.id)">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4">
+        <h6 class="text-sm font-medium text-gray-700 mb-2">Tâches:</h6>
+        <div class="space-y-4">
+          <div *ngFor="let group of groupedTasks[plan.id] | keyvalue" class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <!-- S Definition Header -->
+            <div class="bg-gray-50 px-3 py-2 border-b border-gray-200">
+              <h4 class="font-medium text-gray-700">{{ group.key }}</h4>
+            </div>
+            
+            <!-- Tasks List -->
+            <ul class="divide-y divide-gray-200">
+              <li *ngFor="let task of group.value" class="p-3 hover:bg-gray-50">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div *ngIf="editingTaskId !== task.id" class="flex items-center gap-2">
+                      <i *ngIf="task.isDone" class="fas fa-check-circle text-green-800"></i>
+                      <span [class]="task.isDone ? 'text-gray-500 line-through' : 'text-gray-700'">
+                        {{ task.name }}
+                      </span>
+                    </div>
+                    <div *ngIf="editingTaskId === task.id" class="flex gap-2 items-center">
+                      <input type="text" 
+                             class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                             [(ngModel)]="task.name">
+                      <div class="flex items-center gap-1">
+                        <button 
+                          (click)="updateTask(task, task.name)"
+                          class="text-blue-600 hover:text-blue-700 cursor-pointer"
+                          title="Sauvegarder">
+                          <i class="fas fa-check text-base"></i>
+                        </button>
+                        <button 
+                          (click)="editingTaskId = null"
+                          class="text-gray-400 hover:text-gray-500 cursor-pointer"
+                          title="Annuler">
+                          <i class="fas fa-times text-base"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex gap-2">
+                    <div *ngIf="editingTaskId !== task.id ">
+                      <button class="text-blue-600 hover:text-blue-800 transition-colors duration-200 mr-2 cursor-pointer"
+                              (click)="startEditTask(task)">
+                        <i class="fa-solid fa-edit"></i>
+                      </button>
+                      <button class="text-red-600 hover:text-red-800 transition-colors duration-200 cursor-pointer"
+                              (click)="deleteTask(task.id)">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Comment Section -->
+                <div *ngIf="task.commantaire && task.commantaire !== 'Empty'" class="mt-2">
+                  <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-[#352961]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Commentaire
+                  </h4>
+                  <div class="p-2 bg-white rounded-md border border-gray-100">
+                    <p class="text-sm text-gray-600">{{ task.commantaire }}</p>
+                  </div>
+                </div>
+
+                <!-- Pictures Section -->
+                <div *ngIf="task.pictures && task.pictures.length > 0" class="mt-2">
+                  <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-[#352961]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Photos
+                  </h4>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div *ngFor="let picture of task.pictures" 
+                         class="group cursor-pointer relative overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
+                         (click)="openImageModal(picture)">
+                      <img [src]="'data:image/jpeg;base64,' + picture" 
+                           alt="Photo de la tâche"
+                           class="w-full h-24 object-cover transform group-hover:scale-105 transition-transform duration-300">
+                      <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="!plan.isDone" class="mt-4 flex gap-2">
+          <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                 placeholder="Nouvelle tâche" #newTask>
+          <select class="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  [ngModel]="getSelectedS(plan.id)"
+                  (ngModelChange)="setSelectedS(plan.id, $event)">
+            <option value="">Sélectionner S</option>
+            <option *ngFor="let s of sDefinitions" [value]="s.id">
+              {{ s.nameEnglish }} ({{ s.nameJaponaise }})
+            </option>
+          </select>
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 flex items-center gap-2 shadow-sm cursor-pointer"
+                  (click)="addTaskToPlan(plan.id, newTask.value)">
+            <i class="fa-solid fa-plus"></i>
+            Ajouter une tâche
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingSpinner>
+    <div *ngIf="loading" class="flex justify-center items-center py-10">
+      <img src="/gif2.gif" alt="Loading..." class="h-20 w-20" loading="lazy" decoding="async">
+  </div>
+  </ng-template>
+
+  <!-- Image Modal -->
+  <div *ngIf="selectedImage" 
+       class="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-xl"
+       (click)="closeImageModal()">
+    <button (click)="closeImageModal()" 
+            class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors cursor-pointer bg-black/50 rounded-full p-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <img [src]="'data:image/jpeg;base64,' + selectedImage" 
+         alt="Photo en grand format"
+         class="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-2xl">
+  </div>
+</div>
+
+

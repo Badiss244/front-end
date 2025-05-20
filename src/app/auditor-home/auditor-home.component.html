@@ -1,0 +1,148 @@
+<!-- Main Dashboard Container -->
+<div class="p-6 max-w-6xl mx-auto">
+  <div class="container mx-auto max-w-7xl">
+    <!-- Stats Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      <!-- Total Audits Card -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-[#352961] mb-1">Total d'audits</p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.totalAudits}}</h3>
+            <p class="text-xs text-green-600 font-medium">Audits réalisés</p>
+          </div>
+          <div class="p-3 bg-blue-50 rounded-2xl">
+            <i class="fa-solid fa-clipboard-list text-2xl h-6 w-6 text-blue-600 flex items-center justify-center pl-1"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Audits Card -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-[#352961] mb-1">Complétés</p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.completedAudits}}</h3>
+            <p class="text-xs text-green-600 font-medium">Audits terminés</p>
+          </div>
+          <div class="p-3 bg-green-50 rounded-2xl">
+            <i class="fa-solid fa-check-circle text-2xl h-6 w-6 text-green-600 flex items-center justify-center"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- In Progress Audits Card -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-[#352961] mb-1">En Cours</p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.inProgressAudits}}</h3>
+            <p class="text-xs text-green-600 font-medium">Audits en cours</p>
+          </div>
+          <div class="p-3 bg-yellow-50 rounded-2xl">
+            <i class="fa-solid fa-spinner text-2xl h-6 w-6 text-yellow-600 flex items-center justify-center"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canceled Audits Card -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-[#352961] mb-1">Annulés</p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.canceledAudits}}</h3>
+            <p class="text-xs text-green-600 font-medium">Audits non terminés</p>
+          </div>
+          <div class="p-3 bg-red-50 rounded-2xl">
+            <i class="fa-solid fa-ban text-2xl h-6 w-6 text-red-600 flex items-center justify-center"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports Card -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-[#352961] mb-1">Rapports</p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.rapports}}</h3>
+            <p class="text-xs text-green-600 font-medium">Rapports générés</p>
+          </div>
+          <div class="p-3 bg-purple-50 rounded-2xl">
+            <i class="fa-solid fa-file-contract text-2xl h-6 w-6 text-purple-600 flex items-center justify-center pl-1"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Audit Distribution Chart -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-6">
+        <div class="relative" style="height: 400px;">
+          <canvas baseChart
+            [data]="pieChartData"
+            [options]="pieChartOptions"
+            [type]="'pie'">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Calendar View -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-6">
+        <div class="flex items-center justify-between mb-6">
+          <button 
+            (click)="previousMonth()"
+            class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <i class="fas fa-chevron-left text-gray-600"></i>
+          </button>
+          <h3 class="text-xl font-bold text-[#352961] capitalize">{{getCurrentMonthName()}}</h3>
+          <button 
+            (click)="nextMonth()"
+            class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <i class="fas fa-chevron-right text-gray-600"></i>
+          </button>
+        </div>
+
+        <!-- Calendar Legend -->
+        <div class="flex items-center justify-center gap-4 mb-4 text-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-blue-100"></div>
+            <span class="text-gray-600">Jour avec audit</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-gray-100"></div>
+            <span class="text-gray-600">Jour sans audit</span>
+          </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="grid grid-cols-7 gap-1">
+          <!-- Week days -->
+          <div *ngFor="let day of weekDays" 
+              class="text-center text-sm font-medium text-gray-600 py-2">
+            {{day}}
+          </div>
+
+          <!-- Calendar days -->
+          <ng-container *ngFor="let week of weeks">
+            <div *ngFor="let day of week" 
+                [class.opacity-40]="!day.isCurrentMonth"
+                class="aspect-square p-1">
+              <div [class.bg-blue-100]="day.hasAudit"
+                   [class.text-blue-600]="day.hasAudit"
+                   [class.bg-gray-100]="!day.hasAudit"
+                   [class.text-gray-600]="!day.hasAudit"
+                   class="w-full h-full rounded-lg flex flex-col items-center justify-center text-sm font-medium transition-colors relative"
+                   [class.hover:bg-gray-200]="!day.hasAudit"
+                   [class.hover:bg-blue-200]="day.hasAudit">
+                <span>{{formatDate(day.date)}}</span>
+                <span *ngIf="day.hasAudit && day.auditCount" class="text-xs mt-1">
+                  {{day.auditCount}} audit{{day.auditCount > 1 ? 's' : ''}}
+                </span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

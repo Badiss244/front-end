@@ -1,0 +1,63 @@
+/* Custom scrollbar for the notification list */
+.max-h-96::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .max-h-96::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  .max-h-96::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+  
+  .max-h-96::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  /* Animation for the notification badge */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .bg-red-500 {
+    animation: pulse 2s infinite;
+  }
+  
+  /* Smooth transition for the dropdown */
+  .absolute {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Hover effect for notification items */
+  .hover\:bg-gray-50:hover {
+    transform: translateX(4px);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  /* Unread notification highlight */
+  .bg-blue-50 {
+    position: relative;
+  }
+  
+  .bg-blue-50::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: #3b82f6;
+    border-radius: 0 3px 3px 0;
+  }
+  

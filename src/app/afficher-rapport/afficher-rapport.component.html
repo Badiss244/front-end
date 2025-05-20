@@ -1,0 +1,111 @@
+<div class="p-6 max-w-6xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-[#352961] mb-2">Rapports d'Audit</h1>
+        <p class="mt-2 text-sm text-gray-600">Consulter les rapports d'audit</p>
+    </div>
+  
+    <div *ngIf="loading" class="flex justify-center items-center py-10">
+        <img src="/gif2.gif" alt="Chargement..." class="h-20 w-20" loading="lazy" decoding="async">
+    </div>
+  
+    <div *ngIf="errorMessage" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-red-700">{{ errorMessage }}</p>
+            </div>
+        </div>
+    </div>
+  
+    <div *ngIf="!loading && !errorMessage" class="space-y-8">
+        <div *ngFor="let report of reports" class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-[#352961] to-[#4a3b8a] p-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-semibold text-white">Rapport de {{ report.auditorName }}</h3>
+                    <div class="flex items-center space-x-4">
+                        <button (click)="exportToPDF(report)" 
+                                class="flex items-center space-x-2 px-4 py-2 bg-white text-[#352961] rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>PDF</span>
+                        </button>
+                        <span class="text-2xl font-semibold text-white">{{ formatDate(report.createdDate) }}</span>
+                    </div>
+                </div>
+                <p class="text-gray-100 text-sm mt-2">Usine : {{ report.factory }}</p>
+            </div>
+            
+            <div class="p-6 space-y-8">
+                <div class="description">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#352961]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Description
+                    </h4>
+                    <p class="text-gray-600 leading-relaxed pl-7">{{ report.description }}</p>
+                </div>
+  
+                <div class="scores">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#352961]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Résultats
+                    </h4>
+                    <div class="space-y-6">
+                        <div *ngFor="let critere of getUniqueCategories(report.scores)" class="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <h5 class="text-xl font-semibold text-[#352961] mb-4">{{ critere }}</h5>
+                            <div class="space-y-3">
+                                <div *ngFor="let score of getScoresByCategory(report, critere)" class="flex justify-between items-center p-3 bg-white rounded-lg">
+                                    <span class="text-gray-700">{{ score.name }}</span>
+                                    <span class="text-lg font-semibold text-[#352961]">{{ score.score }}/5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+  
+                <div class="pictures" *ngIf="report.pictures && report.pictures.length > 0">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#352961]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Photos
+                    </h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <div *ngFor="let picture of report.pictures" 
+                             class="group cursor-pointer relative overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
+                             (click)="openImageModal(picture)">
+                            <img [src]="'data:image/jpeg;base64,' + picture" 
+                                 alt="Photo du rapport"
+                                 class="w-full h-32 object-cover transform group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div *ngIf="selectedImage" 
+     class="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-xl"
+     (click)="closeImageModal()">
+    <button (click)="closeImageModal()" 
+            class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors cursor-pointer bg-black/50 rounded-full p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+    <img [src]="'data:image/jpeg;base64,' + selectedImage" 
+         alt="Photo du rapport en grand format"
+         class="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-2xl">
+</div>
+  

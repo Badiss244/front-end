@@ -1,0 +1,92 @@
+<div class="h-screen flex font-sans">
+  <!-- SECTION GAUCHE: Formulaire de connexion -->
+  <div class="w-full md:w-1/2 flex flex-col justify-center items-center bg-blue-100 p-8">
+    <!-- Titre avec design amélioré -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-[#352961] tracking-wide">S'AUTHENTIFIER</h1>
+      <div class="mt-2 h-1 w-20 mx-auto bg-gradient-to-r from-purple-600 to-pink-500 rounded-full"></div>
+      
+    </div>
+    <!-- Formulaire -->
+    <form class="w-full max-w-md backdrop-blur-sm bg-white/30 p-8 rounded-2xl shadow-lg" (submit)="$event.preventDefault(); onSubmit()">
+      <!-- Champ Username -->
+      <div class="mb-6">
+        <label for="username" class="block text-gray-700 font-semibold mb-2 text-sm uppercase tracking-wide">
+          Nom d'utilisateur
+        </label>
+        <div class="flex items-center border-2 border-gray-300 rounded-lg transition-all duration-300 focus-within:border-purple-500 hover:border-purple-400">
+          <!-- Icône Username -->
+          <div class="px-4 text-gray-500">
+            <i class="fa-solid fa-user text-lg"></i>
+          </div>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Entrez votre nom d'utilisateur"
+            class="w-full py-3 px-2 bg-transparent focus:outline-none rounded-r-lg"
+            required
+            [(ngModel)]="username"
+          />
+        </div>
+      </div>
+      <!-- Champ Password -->
+      <div class="mb-6">
+        <label for="password" class="block text-gray-700 font-semibold mb-2 text-sm uppercase tracking-wide">
+          Mot de passe
+        </label>
+        <div class="flex items-center border-2 border-gray-300 rounded-lg transition-all duration-300 focus-within:border-purple-500 hover:border-purple-400">
+          <!-- Icône Password -->
+          <div class="px-4 text-gray-500">
+            <i class="fa-solid fa-key text-lg"></i>
+          </div>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Entrez votre mot de passe"
+            class="w-full py-3 px-2 bg-transparent focus:outline-none rounded-r-lg"
+            required
+            [(ngModel)]="password"
+          />
+        </div>
+      </div>
+      <!-- Bouton Sign In avec animations améliorées -->
+      <button
+        type="submit"
+        class="w-full py-3 mt-6 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg 
+               hover:shadow-lg hover:opacity-90 transform hover:-translate-y-0.5 
+               transition-all duration-300  cursor-pointer"
+      >
+        <span class="flex items-center justify-center">
+          <i class="fa-solid fa-right-to-bracket mr-2"></i>
+          Se connecter
+        </span>
+      </button>
+      <!-- Lien mot de passe oublié -->
+      <div class="mt-4 text-right">
+        <a routerLink="/reset-password" 
+           class="text-sm text-purple-600 hover:text-pink-600 transition-colors duration-300 hover:underline font-semibold">
+          Mot de passe oublié ?
+        </a>
+      </div>
+      
+      <!-- Message d'erreur avec animation -->
+      <div *ngIf="errorMessage" 
+           class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-center text-sm animate-fade-in">
+        <i class="fa-solid fa-circle-exclamation mr-2"></i>
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+  <!-- SECTION DROITE: Dégradé violet + Design géométrique -->
+  <div class="hidden md:flex w-1/2 bg-gradient-to-br from-[#6e00ff] via-[#8e2de2] to-[#4a00e0] items-center justify-center p-10 relative overflow-hidden">
+    <!-- Motif géométrique en CSS -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
+    </div>
+    <!-- Image de login -->
+    <img src="login.png" alt="Illustration Login" class="relative z-10 max-w-xl w-full h-auto transform hover:scale-105 transition-transform duration-500" />
+  </div>
+</div>
+<app-chat-bot-testing></app-chat-bot-testing>

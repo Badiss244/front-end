@@ -1,0 +1,88 @@
+<!-- Main Dashboard Container -->
+<div class="p-6 max-w-6xl mx-auto">
+    <div class="container mx-auto max-w-7xl">
+      <!-- Factory Info Header -->
+      <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-6 mb-8">
+        <h1 class="text-2xl font-bold text-[#352961] mb-2 text-center " >Usine : {{stats.factoryName}}</h1>
+        <p class="text-gray-600 text-center"> Adresse : {{stats.factoryAddress}}</p>
+      </div>
+
+      <!-- Stats Overview Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <!-- Total Plans Card -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-[#352961] mb-1">Plans d'Action</p>
+              <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.totalPlanActions}}</h3>
+              <p class="text-xs text-green-600 font-medium">Plans créés</p>
+            </div>
+            <div class="p-3 bg-purple-50 rounded-2xl">
+              <i class="fa-solid fa-tasks text-2xl h-6 w-6 text-purple-600 flex items-center justify-center "></i>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Reports Card -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-[#352961] mb-1">Rapports</p>
+              <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.rapports}}</h3>
+              <p class="text-xs text-green-600 font-medium">Rapports générés</p>
+            </div>
+            <div class="p-3 bg-green-50 rounded-2xl">
+              <i class="fa-solid fa-file-contract text-2xl h-6 w-6 text-green-600 flex items-center justify-center pl-1"></i>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Total Tasks Card -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-[#352961] mb-1">Tâches</p>
+              <h3 class="text-2xl font-bold text-gray-800 mb-1">{{stats.totalTasksToDo}}</h3>
+              <p class="text-xs text-green-600 font-medium">Tâches planifiées</p>
+            </div>
+            <div class="p-3 bg-yellow-50 rounded-2xl">
+              <i class="fa-solid fa-file text-2xl h-6 w-6 text-yellow-600 flex items-center justify-center pl-1"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Tasks Distribution Chart -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-6">
+          <div class="relative" style="height: 300px;">
+            <canvas baseChart
+              [data]="pieChartData"
+              [options]="pieChartOptions"
+              [type]="'pie'">
+            </canvas>
+          </div>
+        </div>
+
+        <!-- Performance Gauge Chart -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-6">
+          <h3 class="text-xl font-bold text-[#352961] mb-4">Performance Globale</h3>
+          <div class="relative" style="height: 300px;">
+            <!-- Scale values -->
+            <div class="absolute bottom-12 left-6 text-3xl font-bold text-[#352961]">0</div>
+            <div class="absolute bottom-12 right-6 text-3xl font-bold text-[#352961]">5</div>
+            
+            <canvas baseChart
+              [data]="gaugeChartData"
+              [options]="gaugeChartOptions"
+              [type]="'doughnut'">
+            </canvas>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+              <div class="text-3xl font-bold text-[#352961]">{{stats.averageScore | number:'1.1-1'}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

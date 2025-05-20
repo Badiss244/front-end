@@ -1,0 +1,119 @@
+<!-- Conteneur de Notifications -->
+<div class="relative">
+  <!-- Icône de Cloche de Notification -->
+  <button 
+    (click)="toggleDropdown()"
+    class="relative p-2 rounded-full  transition-colors duration-200"
+  >
+  
+    <i  class="fa-solid fa-bell text-xl text-[#272343] hover:text-gray-600 cursor-pointer "></i>
+ 
+    <!-- Badge Non Lu -->
+    <span 
+      *ngIf="unreadCount > 0 "
+      class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+    >
+      {{ unreadCount }}
+      
+    </span>
+    <span *ngIf="unreadCount > 99 " 
+    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-6 h-5 flex items-center justify-center"> +99 </span>
+
+  </button>
+
+  <!-- Menu Déroulant des Notifications -->
+  <div 
+    *ngIf="showDropdown"
+    class="notification-dropdown absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+  >
+    <!-- En-tête -->
+    <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-[#352961]">Notifications</h3>
+      <button 
+        *ngIf="unreadCount > 0"
+        (click)="markAllAsRead()"
+        class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
+      >
+        Tout marquer comme lu
+      </button>
+    </div>
+
+    <!-- Liste des Notifications -->
+    <div class="max-h-96 overflow-y-auto">
+      <div 
+        *ngFor="let notification of (showAllNotifications ? notifications : notifications.slice(0, 5))" 
+        class="relative p-4 border-b border-gray-100 hover:bg-white transition-colors duration-200"
+      >
+        <!-- Indicateur de Bordure Gauche -->
+        <div 
+          class="absolute left-0 top-0 bottom-0 w-1"
+          [ngClass]="{
+            'bg-red-500': notification.type === 'alerte',
+            'bg-blue-500': notification.type === 'info'
+          }"
+        ></div>
+
+        <div class="flex items-start space-x-3">
+          <!-- Conteneur d'Icône -->
+          <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+            <i 
+              [class]="getNotificationIcon(notification.type) + ' ' + getNotificationColor(notification.type)"
+              class="text-xl"
+            ></i>
+          </div>
+          
+          <!-- Contenu -->
+          <div class="flex-1">
+            <!-- Badge de Type de Message -->
+            <div class="flex items-center space-x-2 mb-1">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-full"
+                    [class]="getNotificationBadgeStyle(notification.type)">
+                {{ notification.type | titlecase }}
+              </span>
+            </div>
+            <p class="text-sm text-gray-800">{{ notification.message }}</p>
+            <div class="mt-1 flex items-center justify-between text-xs text-gray-500">
+              <span>De: {{ notification.username }}</span>
+              <span>{{ formatTimestamp(notification.createdAt) }}</span>
+            </div>
+          </div>
+          
+          <!-- Bouton Marquer comme Lu -->
+          <button 
+            *ngIf="!notification.isRead"
+            (click)="markAsRead(notification)"
+            class="flex-shrink-0 text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
+          >
+            Marquer comme lu
+          </button>
+          <!-- Bouton Supprimer -->
+          <button 
+            (click)="deleteNotification(notification)"
+            class="flex-shrink-0 text-xs text-red-600 hover:text-red-800 cursor-pointer ml-2"
+          >
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- État Vide -->
+      <div 
+        *ngIf="notifications.length === 0"
+        class="p-4 text-center text-gray-500"
+      >
+        Aucune notification
+      </div>
+    </div>
+
+    <!-- Pied de Page -->
+    <div class="p-4 border-t border-gray-200 text-center">
+      <button 
+        *ngIf="notifications.length > 5"
+        (click)="viewAllNotifications()"
+        class="text-sm text-blue-600 hover:text-blue-800"
+      >
+        {{ showAllNotifications ? 'Voir moins' : 'Voir toutes les notifications' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,150 @@
+<!-- Main Container -->
+<div class="p-6 bg-blue-100 min-h-screen">
+  <!-- Notification Form -->
+  <div class="bg-white rounded-xl shadow-sm p-6 max-w-2xl mx-auto relative">
+    <!-- Back Button -->
+    <button (click)="goback()" class="absolute -right-3 -top-3 bg-white rounded-full p-2 shadow-md text-gray-500 hover:text-gray-700 cursor-pointer">
+      <i class="fas fa-times text-xl"></i>
+    </button>
+
+    <h2 class="text-2xl font-bold text-[#352961] mb-6">Notifications</h2>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+    <div class="flex items-center text-green-600">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      {{ successMessage }}
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+    <div class="flex items-center text-red-600">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- Notification Form -->
+  <form (ngSubmit)="sendNotification()" class="space-y-6">
+    <!-- Role Selection -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700">Rôle</label>
+      <select 
+        [(ngModel)]="roleDes" 
+        name="roleDes"
+        (ngModelChange)="onRoleChange()"
+        class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all duration-200"
+      >
+        <option value="">Sélectionner un rôle</option>
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+    </div>
+
+    <!-- User Selection -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700">Utilisateurs (optionnel)</label>
+      <div class="relative user-dropdown">
+        <button 
+          type="button"
+          (click)="isUserDropdownOpen = !isUserDropdownOpen"
+          class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all duration-200 text-left flex justify-between items-center"
+        >
+          <span class="text-gray-700 truncate">
+            {{ selectedUserNames.length ? selectedUserNames.length + ' utilisateur(s) sélectionné(s)' : 'Sélectionner des utilisateurs' }}
+          </span>
+          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        
+        <!-- Dropdown Menu -->
+        <div 
+          *ngIf="isUserDropdownOpen" 
+          class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto"
+        >
+          <div class="p-2">
+            <div class="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
+              <input 
+                type="checkbox" 
+                (change)="toggleAllUsers($event)"
+                [checked]="selectedUserNames.length === filteredUsers.length && filteredUsers.length > 0"
+                class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              >
+              <span class="ml-2 text-sm text-gray-700">Sélectionner tous</span>
+            </div>
+            <div class="border-t border-gray-200 my-2"></div>
+            <div 
+              *ngFor="let user of filteredUsers" 
+              class="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+            >
+              <div class="flex items-center w-full" (click)="toggleUser(user.username)">
+                <input 
+                  type="checkbox" 
+                  [checked]="isUserSelected(user.username)"
+                  class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                >
+                <span class="ml-2 text-sm text-gray-700">{{ user.username }}</span>
+              </div>
+            </div>
+            <div *ngIf="filteredUsers.length === 0" class="p-2 text-sm text-gray-500 text-center">
+              Aucun utilisateur disponible pour ce rôle
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Type -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700">Type de notification</label>
+      <select 
+        [(ngModel)]="type" 
+        name="type"
+        class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all duration-200"
+      >
+        <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+
+    <!-- Message -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700">Message</label>
+      <textarea 
+        [(ngModel)]="message" 
+        name="message"
+        rows="4"
+        placeholder="Entrez votre message"
+        class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all duration-200"
+        required
+      ></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="flex justify-end space-x-4">
+      <button 
+        type="button" 
+        (click)="goback()"
+        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-all duration-200 cursor-pointer"
+      >
+        Annuler
+      </button>
+      <button 
+        type="submit"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center space-x-2 cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg>
+        <span>Envoyer</span>
+      </button>
+    </div>
+  </form>
+</div>
+</div>
+<app-chat-bot-testing></app-chat-bot-testing>
+

@@ -1,0 +1,99 @@
+<div class="min-h-screen flex flex-col relative">
+  <!-- Background Image Container -->
+  <div class="fixed inset-0 z-0">
+    <img src="poulina.jpg" alt="Background" class="w-full h-full object-cover object-top filter brightness-[0.9] blur-[4px]">
+    <div class="absolute inset-0 bg-gradient-to-b from-white/30 via-white/50 to-white/70"></div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="relative z-10 flex flex-col min-h-screen">
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow-md p-1">
+      <div class="container mx-auto flex justify-between items-center px-2">
+        <!-- Logo & Title -->
+        <div class="flex items-center">
+          <img src="egg.png" alt="Poulina Logo" class="h-14 w-auto">
+          <span class="ml-3 text-lg font-bold text-[#035a87]">Poulina Group Holding</span>
+        </div>
+
+        <!-- System Status -->
+        <div class="flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="relative">
+              <div [ngClass]="{'bg-green-500': !isMaintenanceMode, 'bg-red-500': isMaintenanceMode}" 
+                   class="w-3 h-3 rounded-full animate-pulse">
+              </div>
+              <div [ngClass]="{'bg-green-500': !isMaintenanceMode, 'bg-red-500': isMaintenanceMode}" 
+                   class="w-3 h-3 rounded-full absolute top-0 animate-ping opacity-75">
+              </div>
+            </div>
+            <span class="ml-2 text-sm font-medium" [ngClass]="{'text-green-700': !isMaintenanceMode, 'text-red-700': isMaintenanceMode}">
+              {{ isMaintenanceMode ? 'Système en maintenance' : 'Système opérationnel' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="hidden md:flex space-x-4 text-black">
+          <li class="font-bold"><a routerLink="/" class="hover:text-[#035a87]">Accueil</a></li>
+          <li class="font-bold"><a routerLink="/about" class="hover:text-[#035a87]">À propos</a></li>
+          <li class="font-bold"><a routerLink="/aide" class="hover:text-[#035a87]">Aide</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+   
+    <section class="flex-grow flex items-center justify-center p-10 bg-gradient-to-b from-transparent via-white/10 to-white/20">
+      <div class="container mx-auto flex flex-col md:flex-row items-center">
+        <!-- Left: Text Section -->
+        <div class="text-center md:text-left md:w-1/2">
+          <h1 class="text-5xl font-extrabold text-[#352961]  leading-tight mb-4">
+            Bienvenue sur la plateforme suivie du 5s
+          </h1>
+          <p class="text-xl text-[#035a87] mt-3 font-medium">
+            Une organisation Parfaite pour des résultats exceptionnels
+          </p>
+          <br>
+          <a routerLink="/login" class="inline-block text-white bg-gradient-to-r from-[#352961] to-[#035a87] hover:from-[#035a87] hover:to-[#352961] transition-all duration-300 font-medium rounded-lg text-lg px-8 py-3 text-center shadow-lg">
+            S'authentifier
+          </a> 
+        </div>
+
+        <!-- Right: Illustration -->
+        <div class="md:w-1/2 mt-6 md:mt-0 flex justify-center">
+          <img src="fo.png" alt="5S Illustration" class="h-90 filter drop-shadow-xl hover:scale-105 transition-transform duration-500">
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gradient-to-b from-white/90 to-[#035a87]/10 backdrop-blur-sm border-t border-[#035a87]/20">
+      <div class="container mx-auto max-w-6xl py-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+          <div class="flex items-center justify-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-[#035a87]/10 flex items-center justify-center">
+              <i class="fa-solid fa-envelope text-[#035a87]"></i>
+            </div>
+            <p class="text-sm font-medium text-[#352961]">contact&#64;poulinagroupholding.com</p>
+          </div>
+          
+          <div class="flex items-center justify-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-[#035a87]/10 flex items-center justify-center">
+              <i class="fa-solid fa-location-dot text-[#035a87]"></i>
+            </div>
+            <p class="text-sm font-medium text-[#352961]">Gp 1 Km 12 Ezzahra, Tunisie</p>
+          </div>
+          
+          <div class="flex items-center justify-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-[#035a87]/10 flex items-center justify-center">
+              <i class="fa-solid fa-copyright text-[#035a87]"></i>
+            </div>
+            <p class="text-sm font-medium text-[#352961]">2025 Tous droits réservés</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+<app-chat-bot-testing></app-chat-bot-testing>

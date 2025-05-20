@@ -1,0 +1,159 @@
+<div class="p-6 max-w-6xl mx-auto">
+  <!-- Header Section -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-[#352961] mb-2">Gestion des Audits</h1>
+    <p class="mt-2 text-sm text-gray-600">Gérez les plans d'audit de vos usines</p>
+  </div>
+
+  <div class="mb-6 flex justify-end">
+    <button 
+      (click)="toggleCreateForm()"
+      class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-indigo-700  cursor-pointer"
+    >
+      <!-- Plus icon -->
+      <svg *ngIf="!showCreateForm" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+      </svg>
+      <!-- X icon -->
+      <svg *ngIf="showCreateForm" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+      </svg>
+      {{ showCreateForm ? 'Fermer' : 'Créer un Audit' }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center items-center py-10">
+    <img src="/gif2.gif" alt="Loading..." class="h-20 w-20" loading="lazy" decoding="async">
+</div>
+
+  <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+    {{ successMessage }}
+  </div>
+
+  <!-- Create Audit Form -->
+  <div *ngIf="showCreateForm" class="mb-8 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Créer un Plan d'Audit</h2>
+    <form (ngSubmit)="createAudit()" class="space-y-6">
+      <div>
+        <label for="factory" class="block text-sm font-medium text-gray-700 mb-2">Sélectionner une Usine</label>
+        <select 
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer"
+          id="factory" 
+          [(ngModel)]="selectedFactoryId" 
+          name="factory"
+          required
+        >
+          <option value="">Sélectionner une usine</option>
+          <option *ngFor="let factory of factories" [value]="factory.id">
+            {{ factory.name }}
+          </option>
+        </select>
+      </div>
+  
+      <div class="relative">
+        <label for="planDate" class="block text-sm font-medium text-gray-700 mb-2">Date du Plan</label>
+        <div class="relative">
+          <input 
+            #dateInput
+            type="date" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 pr-10"
+            id="planDate" 
+            [(ngModel)]="planDate" 
+            name="planDate"
+            required
+          >
+          <button 
+            type="button"
+            (click)="dateInput.showPicker()"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hover:opacity-75 transition-opacity"
+          >
+            <svg class="h-5 w-5 text-[#272343]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+  
+      <button 
+        type="submit" 
+        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+      >
+        Créer le Plan d'Audit
+      </button>
+    </form>
+  </div>
+
+  <!-- Audits List -->
+  <div *ngIf="!loading" class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-blue-600">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-200">Usine</th>
+            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-200">Filiale</th>
+            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-200">Date Créée</th>
+            <th class="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-200">Date Planifiée</th>
+            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-200">Statut</th>
+            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngIf="audits.length === 0">
+            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+              <div class="flex flex-col items-center justify-center">
+                <i class="fa-solid fa-clipboard-list text-3xl text-center "></i>
+                <p class="text-lg font-medium">Aucun audit disponible</p>
+              </div>
+            </td>
+          </tr>
+          <tr *ngFor="let audit of audits" class="hover:bg-gray-50 transition-colors duration-150 ease-in-out">
+            <td class="px-5 py-4 whitespace-nowrap text-sm  text-gray-800">{{ audit.factory }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ audit.filiale }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ formatDate(audit.createdAt) }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ formatDate(audit.planDate) }}</td>
+            <td class="px-2 py-4 whitespace-nowrap">
+              <span [class]="'px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ' + 
+              (audit.status === 'Underway' ? 'bg-yellow-100 text-yellow-800' : 
+               audit.status === 'Cancelled' ? 'bg-red-100 text-red-800' : 
+               audit.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+               'bg-gray-100 text-gray-800')">
+                {{ audit.status === 'Underway' ? 'En Cours' : 
+                   audit.status === 'Cancelled' ? 'Annulé' : 
+                   audit.status === 'Completed' ? 'Terminé' : 
+                   audit.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <div class="flex space-x-4">
+                <button 
+                  *ngIf="audit.status === 'Underway'"
+                  (click)="cancelAudit(audit.idAudit)"
+                  class="text-red-600 hover:text-red-900 font-medium cursor-pointer transition-colors duration-150 ease-in-out"
+                >
+                  Annuler
+                </button>
+                <button 
+                  *ngIf="audit.status === 'Underway'"
+                  (click)="createReport(audit.idAudit)"
+                  [disabled]="!isPlanDateReached(audit)"
+                  [class]="isPlanDateReached(audit) ? 'pl-20 text-blue-600 hover:text-blue-900 font-medium cursor-pointer transition-colors duration-150 ease-in-out flex items-center' : 'pl-20 text-gray-400 font-medium flex items-center cursor-not-allowed'"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                  </svg>
+                  Réaliser Rapport
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  

@@ -1,0 +1,77 @@
+<div class="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-blue-100">
+  
+  <!-- NAVBAR -->
+  <nav class="bg-white shadow-md p-1">
+    <div class="container mx-auto flex justify-between items-center px-2">
+      <!-- Logo & Title -->
+      <div class="flex items-center">
+        <img src="egg.png" alt="Poulina Logo" class="h-14 w-auto">
+        <span class="ml-3 text-lg font-bold text-[#035a87]">Poulina Group Holding</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <ul class="hidden md:flex space-x-4 text-black">
+        <li class="font-bold"><a routerLink="/" class="hover:text-[#035a87]">Accueil</a></li>
+        <li class="font-bold"><a routerLink="/about" class="hover:text-[#035a87]">À propos</a></li>
+        <li class="font-bold"><a routerLink="/aide" class="hover:text-[#035a87]">Aide</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <!-- SECTION À PROPOS -->
+  <section class="flex-grow p-8 md:p-12">
+    <div class="container mx-auto max-w-4xl">
+      <div class="bg-white p-8 rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl">
+        <h1 class="text-4xl font-bold text-[#272343] mb-8 text-center">À propos des 5S</h1>
+        <div class="space-y-6">
+          <p class="text-lg text-gray-700 leading-relaxed">
+            Les 5S représentent une méthode japonaise d'organisation du poste de travail qui vise à améliorer la productivité, la qualité et la sécurité. Cette démarche s'appuie sur 5 étapes essentielles :
+          </p>
+          
+          <div class="grid gap-6">
+            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-[#272343] hover:bg-blue-100 transition-colors duration-300">
+              <h2 class="text-xl font-semibold text-[#272343] mb-2 flex items-center">
+                <i class="fa-solid fa-filter mr-3 text-[#272343]"></i>
+                Seiri (Trier)
+              </h2>
+              <p class="text-gray-700">Séparer l'essentiel du superflu et éliminer tout ce qui encombre le poste de travail afin de créer un environnement optimisé.</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-[#272343] hover:bg-blue-100 transition-colors duration-300">
+              <h2 class="text-xl font-semibold text-[#272343] mb-2 flex items-center">
+                <i class="fa-solid fa-gear mr-3 text-[#272343]"></i>
+                Seiton (Ranger)
+              </h2>
+              <p class="text-gray-700">Organiser l'espace de travail pour que chaque outil ou document soit à sa place, facilitant ainsi leur accès et réduisant les pertes de temps.</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-[#272343] hover:bg-blue-100 transition-colors duration-300">
+              <h2 class="text-xl font-semibold text-[#272343] mb-2 flex items-center">
+                <i class="fa-solid fa-broom mr-3 text-[#272343]"></i>
+                Seiso (Nettoyer)
+              </h2>
+              <p class="text-gray-700">Maintenir un environnement propre pour prévenir les accidents, améliorer la qualité du travail et identifier rapidement toute anomalie.</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-[#272343] hover:bg-blue-100 transition-colors duration-300">
+              <h2 class="text-xl font-semibold text-[#272343] mb-2 flex items-center">
+                <i class="fa-solid fa-list-check mr-3 text-[#272343]"></i>
+                Seiketsu (Standardiser)
+              </h2>
+              <p class="text-gray-700">Mettre en place des procédures et normes qui garantissent la pérennité des bonnes pratiques établies lors des trois premières étapes.</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-[#272343] hover:bg-blue-100 transition-colors duration-300">
+              <h2 class="text-xl font-semibold text-[#272343] mb-2 flex items-center">
+                <i class="fa-solid fa-recycle mr-3 text-[#272343]"></i>
+                Shitsuke (Soutenir)
+              </h2>
+              <p class="text-gray-700">Encourager et former les équipes afin que ces pratiques deviennent une habitude, assurant ainsi une amélioration continue et durable.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<app-chat-bot-testing></app-chat-bot-testing>

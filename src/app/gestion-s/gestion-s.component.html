@@ -1,0 +1,277 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-[#352961] mb-2">Gestion des S</h1>
+    <p class="text-gray-600">Gérez les principes S de votre entreprise</p>
+  </div>
+  <!-- Error Message -->
+  <div *ngIf="error" class="bg-red-50 border-l-4 border-red-400 p-4 mb-4" role="alert">
+    <p class="text-red-700">{{ error }}</p>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="bg-green-50 border-l-4 border-green-400 p-4 mb-4" role="alert">
+    <p class="text-green-700">{{ successMessage }}</p>
+  </div>
+
+  <!-- Loading  -->
+  <div *ngIf="loading" class="flex justify-center items-center py-10">
+    <img src="/gif2.gif" alt="chargement en cours" class="h-20 w-20" loading="lazy" decoding="async">
+  </div>
+
+  <div *ngIf="!loading" class="space-y-6">
+    <!-- Header Actions -->
+    <div class="flex justify-between items-center mb-6">
+      <!-- Sync Button -->
+      <button
+        (click)="synchronizeData()"
+        [disabled]="isSynchronizing"
+        class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div *ngIf="!isSynchronizing" class="flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>Synchroniser</span>
+        </div>
+        <div *ngIf="isSynchronizing" class="flex items-center space-x-2">
+          <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>Synchronisation...</span>
+        </div>
+      </button>
+      
+      <!-- Add New S Button -->
+      <button
+        (click)="toggleAddSForm()"
+        [ngClass]="{'bg-gray-600 hover:bg-gray-700': showAddSForm, 'bg-blue-600 hover:bg-blue-700': !showAddSForm}"
+        class="text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md text-sm cursor-pointer"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path *ngIf="!showAddSForm" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <path *ngIf="showAddSForm" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        <span>{{ showAddSForm ? 'Fermer' : 'Ajouter un nouveau principe S' }}</span>
+      </button>
+    </div>
+
+    <!-- Add S Form -->
+    <div *ngIf="showAddSForm" class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <form (ngSubmit)="addS()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Nom en français</label>
+            <input
+              type="text"
+              [(ngModel)]="newS.nameEnglish"
+              name="nameEnglish"
+              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:border-[#272343] transition-colors"
+              placeholder="Entrez le nom en français"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Nom en japonais (optionnel)</label>
+            <input
+              type="text"
+              [(ngModel)]="newS.nameJaponaise"
+              name="nameJaponaise"
+              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:border-[#272343] transition-colors"
+              placeholder="Entrez le nom en japonais"
+            >
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md text-sm cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Sauvegarder</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Table Layout -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <!-- Table Header -->
+      <div class="grid grid-cols-5 gap-4 p-4 bg-blue-600 text-white text-sm font-medium">
+        <div class="col-span-1">Principe S</div>
+        <div class="col-span-3">Critères</div>
+        <div class="col-span-1 pl-32">Actions</div>
+      </div>
+
+      <!-- Table Body -->
+      <div class="divide-y divide-gray-100">
+        <div *ngFor="let s of sDefinitions" class="grid grid-cols-5 gap-4 p-4 items-start hover:bg-gray-50">
+          <!-- S Name Column -->
+          <div class="col-span-1">
+            <div class="flex items-center">
+              <div>
+                <div *ngIf="editingS?.idSDefinition !== s.idSDefinition">
+                  <div *ngIf="s.nameJaponaise" class="font-medium">{{ s.nameEnglish }} ({{ s.nameJaponaise }})</div>
+                  <div *ngIf="!s.nameJaponaise" class="font-medium">{{ s.nameEnglish }}</div>
+                </div>
+                <form *ngIf="editingS?.idSDefinition === s.idSDefinition"
+                      (ngSubmit)="updateS(editingS!)"
+                      class="space-y-2">
+                  <input
+                    type="text"
+                    [ngModel]="editingS!.nameEnglish"
+                    (ngModelChange)="editingS!.nameEnglish = $event"
+                    name="nameEnglish"
+                    class="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    placeholder="Nom en français"
+                  >
+                  <input
+                    type="text"
+                    [ngModel]="editingS!.nameJaponaise"
+                    (ngModelChange)="editingS!.nameJaponaise = $event"
+                    name="nameJaponaise"
+                    class="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    placeholder="Nom en japonais (optionnel)"
+                  >
+                  <div class="flex items-center gap-1">
+                    <button 
+                      type="submit" 
+                      class="text-blue-600 hover:text-blue-700 cursor-pointer"
+                      title="Sauvegarder"
+                    >
+                      <i class="fas fa-check text-base"></i>
+                    </button>
+                    <button 
+                      type="button" 
+                      (click)="cancelEditingS()" 
+                      class="text-gray-400 hover:text-gray-500 cursor-pointer"
+                      title="Annuler"
+                    >
+                      <i class="fas fa-times text-base"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div *ngIf="editingS?.idSDefinition !== s.idSDefinition" class="flex items-center gap-2 ml-2">
+                <button
+                  (click)="startEditingS(s)"
+                  class="text-[#9ACD32] hover:text-[#556B2F] cursor-pointer"
+                  title="Modifier le principe"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  (click)="deleteS(s.idSDefinition)"
+                  class="text-red-600 hover:text-red-700 cursor-pointer"
+                  title="Supprimer le principe"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Criteres Column -->
+          <div class="col-span-3">
+            <!-- Add Critere Form -->
+            <div *ngIf="showAddFormForId === s.idSDefinition" class="mb-4">
+              <form (ngSubmit)="addCritere(s)" class="flex items-center gap-2">
+                <input
+                  type="text"
+                  [(ngModel)]="newCritereName"
+                  name="name"
+                  required
+                  class="flex-grow rounded-lg border border-gray-200 px-3 py-0.5 focus:outline-none focus:border-black focus:bg-white transition-all duration-200 text-gray-700 bg-gray-50"
+                  placeholder="Nom du critère"
+                >
+                <button
+                  type="submit"
+                  [disabled]="!newCritereName"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3 rounded-md transition-all duration-200 flex items-center space-x-1.5 shadow-sm hover:shadow-md text-xs disabled:cursor-not-allowed cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Ajouter</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Criteres List -->
+            <div class="space-y-2">
+              <div *ngIf="!s.critaires || s.critaires.length === 0" class="text-gray-400 text-base">
+                Aucun critère n'a été ajouté.
+              </div>
+              <div *ngFor="let critere of s.critaires" class="flex items-center justify-between ">
+                <div class="flex-grow text-sm">
+                  <div *ngIf="editingCritere?.idCritereDefinition !== critere.idCritereDefinition">
+                    {{ critere.name }}
+                  </div>
+                  <form *ngIf="editingCritere?.idCritereDefinition === critere.idCritereDefinition"
+                        (ngSubmit)="updateCritere(editingCritere)"
+                        class="flex items-center gap-2 ">
+                    <input
+                      type="text"
+                      [ngModel]="editingCritere?.name || ''"
+                      (ngModelChange)="editingCritere!.name = $event"
+                      name="name"
+                      class="flex-grow rounded border border-gray-200 px-2 py-1 text-sm focus:outline-none focus:border-blue-500 transition-colors "
+                      (keydown.escape)="cancelEditingCritere()"
+                    >
+                    <button type="submit" class="text-blue-600 hover:text-blue-700 cursor-pointer">
+                      <i class="fas fa-check text-base"></i>
+                    </button>
+                    <button type="button" (click)="cancelEditingCritere()" class="text-gray-400 hover:text-gray-500 cursor-pointer">
+                      <i class="fas fa-times text-base"></i>
+                    </button>
+                  </form>
+                </div>
+                <div *ngIf="editingCritere?.idCritereDefinition !== critere.idCritereDefinition" 
+                     class="flex items-center gap-1">
+                  <button
+                    (click)="startEditingCritere(critere)"
+                    class="w-6 h-6 flex items-center justify-center text-[#9ACD32] hover:text-[#556B2F]  rounded transition-colors cursor-pointer"
+                    title="Modifier le critère"
+                  >
+                    <i class="fas fa-edit text-base"></i>
+                  </button>
+                  <button
+                    (click)="deleteCritere(critere)"
+                    class="w-6 h-6 flex items-center justify-center text-red-600 hover:text-red-700 rounded transition-colors cursor-pointer"
+                    title="Supprimer le critère"
+                  >
+                    <i class="fas fa-trash text-base"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions Column -->
+          <div class="col-span-1 flex justify-end items-center gap-2">
+            <button
+              *ngIf="showAddFormForId === s.idSDefinition"
+              (click)="toggleAddForm(s.idSDefinition)"
+              class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-1.5 px-3 rounded-md transition-all mt-[1px] duration-200 flex items-center space-x-1.5 shadow-sm hover:shadow-md text-xs cursor-pointer mr-7"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>Fermer</span>
+            </button>
+            <button
+              *ngIf="showAddFormForId !== s.idSDefinition"
+              (click)="toggleAddForm(s.idSDefinition)"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3 rounded-md transition-all duration-200 flex items-center space-x-1.5 shadow-sm hover:shadow-md text-xs cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Ajouter un critère</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

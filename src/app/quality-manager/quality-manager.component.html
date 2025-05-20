@@ -1,0 +1,122 @@
+<div class="flex h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-[#272343] p-4 flex flex-col justify-between border-r border-black">
+      
+      <!-- Top part of the sidebar -->
+      <div>
+        <!-- Avatar + user info -->
+        <div class="flex items-center mb-6">
+          <div class="relative">
+            <img
+              class="w-10 h-10 rounded-full ring-2 ring-[#3a3a3a]"
+              [src]="qualityManagerProfileImage"
+              alt="Auditor Avatar"
+            />
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#272343]"></span>
+          </div>
+          <div class="ml-3">
+            <p class="text-m font-bold text-[#FFFDD0]">{{ qualityManagerName }}</p>
+            <p class="text-xs text-[Seashell]">Responsable Qualité</p>
+          </div>
+        </div>
+  
+        <!-- Navigation links -->
+        <nav class="flex flex-col space-y-1">
+            <a
+          routerLink="/quality-manager/quality-home"
+          class="grid grid-cols-[24px_1fr] items-center gap-3 py-2 px-4 text-white hover:bg-black rounded-md"
+        >
+          <i class="fa-solid fa-home w-[24px] text-center"></i>
+          <span>Acceuil</span>
+        </a>
+          <!-- Plan d'actions -->
+          <a
+            routerLink="/quality-manager/plan-action"
+            class="grid grid-cols-[24px_1fr] items-center gap-3 py-2 px-4 text-white hover:bg-black rounded-md"
+          >
+            <i class="fa-solid fa-tasks w-[24px] text-center"></i>
+            <span>Plans d'action</span>
+          </a>
+          <!-- Rapports -->
+          <a
+            routerLink="/quality-manager/rapport"
+            class="grid grid-cols-[24px_1fr] items-center gap-3 py-2 px-4 text-white hover:bg-black rounded-md"
+          >
+            <i class="fa-solid fa-file-contract w-[24px] text-center"></i>
+            <span>Rapports</span>
+          </a>
+        </nav>
+      </div>
+  
+      <!-- LOGOUT BUTTON -->
+      <button class="Btn" (click)="logout()">
+        <div class="sign">
+          <svg viewBox="0 0 512 512">
+            <path
+              d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"
+            />
+          </svg>
+        </div>
+        <div class="text">Se déconnecter</div>
+      </button>
+    </aside>
+  
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col bg-blue-100">
+      
+      <!-- TOPBAR -->
+      <header class="h-16 bg-white shadow-md flex items-center justify-between px-6 relative">
+        <!-- Left side: Logo and Title -->
+        <div class="flex items-center">
+          <img src="egg.png" alt="Poulina Logo" class="h-14 w-auto">
+          <span class="ml-3 text-lg font-bold text-[#035a87]">Poulina Group Holding</span>
+        </div>
+        <!-- Right side: Notification & Gear Dropdown -->
+        <div class="flex items-center space-x-4">
+          <!-- Create Notification Icon -->
+          <a 
+            routerLink="/notification"
+            class="relative focus:outline-none flex items-center justify-center w-8 h-8 hover:scale-105"
+          >
+            <i class="fa-solid fa-message text-[#272343] hover:text-[#272343]/80 text-xl transition-colors"></i>
+          </a>
+          <!-- Notification Component -->
+          <app-get-notification></app-get-notification>
+          <!-- Gear Button with Dropdown -->
+          <div class="relative flex items-center justify-center w-8 h-8">
+            <button
+              (click)="toggleDropdown()"
+              class="focus:outline-none cursor-pointer transition-transform duration-700 hover:rotate-360"
+            >
+              <i class="fa-solid fa-gear text-[#272343] hover:text-[#272343]/80 text-xl"></i>
+            </button>
+            <!-- Dropdown Menu -->
+            <div
+              *ngIf="dropdownOpen"
+              class="gear-dropdown absolute right-1 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Paramètres</h3>
+              </div>
+              <ul class="py-2">
+                <li>
+                  <a routerLink="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-user mr-2"></i>
+                    Mon profil
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>          
+      </header>
+  
+      <!-- CONTENT AREA -->
+      <main class="p-4 flex-grow overflow-y-auto">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+  <app-chat-bot-testing></app-chat-bot-testing>
+  
