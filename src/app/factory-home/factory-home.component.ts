@@ -162,7 +162,7 @@ export class FactoryHomeComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({
-      'Authorization': 'Bearer ${token}'
+      'Authorization': 'Bearer'+token
     });
 
     this.http.get<FactoryStats>('https://localhost:7299/api/Factory/factory-stats', { headers })
