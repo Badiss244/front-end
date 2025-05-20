@@ -75,7 +75,7 @@ export class GestionUsinesComponent implements OnInit {
 
   fetchFiliales() {
     const token = this.cookieService.get('jwt_token');
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ${token}');
+    const headers = new HttpHeaders().set('Authorization', 'Bearer '+ token);
 
     this.http.get<Filiale[]>('https://localhost:7299/api/Admin/filiales', { headers })
       .subscribe({
