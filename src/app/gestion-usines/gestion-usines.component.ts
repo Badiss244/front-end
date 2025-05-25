@@ -131,7 +131,7 @@ export class GestionUsinesComponent implements OnInit {
     }
 
     const token = this.cookieService.get('jwt_token');
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ${token}');
+    const headers = new HttpHeaders().set('Authorization', 'Bearer '+token);
 
     const payload = {
       id: this.editingUsine.id,
@@ -140,7 +140,7 @@ export class GestionUsinesComponent implements OnInit {
       filialeId: this.editingUsine.filialeId
     };
 
-    this.http.put('https://localhost:7299/api/Admin/factory/${this.editingUsine.id}', payload, { headers })
+    this.http.put('https://localhost:7299/api/Admin/factory/' + this.editingUsine.id, payload, { headers })
       .subscribe({
         next: () => {
           this.successMessage = 'Usine modifiée avec succès!';
@@ -183,7 +183,7 @@ export class GestionUsinesComponent implements OnInit {
       return;
     }
 
-    this.http.delete('https://localhost:7299/api/Admin/factory/${usine.id}', { 
+    this.http.delete(`https://localhost:7299/api/Admin/factory/${usine.id}`, { 
       headers,
       responseType: 'text' as 'json'
     })
@@ -216,7 +216,7 @@ export class GestionUsinesComponent implements OnInit {
     }
 
     const token = this.cookieService.get('jwt_token');
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ${token}');
+    const headers = new HttpHeaders().set('Authorization', 'Bearer '+token);
 
     this.http.post('https://localhost:7299/api/Admin/factory', this.newUsine, { headers })
       .subscribe({

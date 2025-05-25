@@ -332,7 +332,12 @@ export class GestionComptesComponent implements OnInit {
         console.error('Erreur lors de la création de l\'utilisateur:', err);
         if (err.status === 400 && (err.error?.message?.includes('already has a factory manager') || err.error?.includes('already has a factory manager'))) {
           this.errorMessage = 'Cette usine a déjà un responsable d\'usine assigné.';
-        } else {
+        } 
+        
+        else if (err.status === 400 && (err.error?.message?.includes('Mail already exist ya b10') || err.error?.includes('Mail already exist ya b10'))){
+          this.errorMessage = 'Cette adresse e-mail est déjà utilisée.';
+        }
+        else {
           this.errorMessage = err.error || 'Erreur lors de la création de l\'utilisateur. Veuillez réessayer.';
         }
         this.isCreatingUser = false;
@@ -470,18 +475,17 @@ export class GestionComptesComponent implements OnInit {
     return this.roletranslation[role] || role;
   }
 
-  // Add this new method
   onRoleSelect(event: Event): void {
     event.stopPropagation();
     this.isRoleDropdownOpen = true;
   }
 
-  // Add this method to handle role change
+  // role change 
   onRoleChange(): void {
     this.isRoleDropdownOpen = false;
   }
 
-  // Add these new methods for custom dropdown
+  
   toggleRoleDropdown(): void {
     this.isRoleDropdownOpen = !this.isRoleDropdownOpen;
   }
@@ -491,7 +495,7 @@ export class GestionComptesComponent implements OnInit {
     this.isRoleDropdownOpen = false;
   }
 
-  // Add click outside handler
+  // click outside handler
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;

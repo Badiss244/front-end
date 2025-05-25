@@ -17,7 +17,7 @@ export class GestionFilialesComponent implements OnInit {
   message: string = '';
   loading: boolean = true;
   
-  // Add new properties for create functionality
+  // new properties for create functionality
   showCreateForm: boolean = false;
   newFilialeName: string = '';
   usersListTemplate: any;
